@@ -1,0 +1,69 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy_api:
+    runs-on: ubuntu-latest
+    name: Deploy API
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 8
+          run_install: false
+
+      # TODO: Add pnpm install cache
+
+      - name: Install deps
+        run: pnpm install
+        working-directory: ./api
+
+      # TODO automatically sync secrets
+      # - name: Setup secrets
+      #   run: |
+      #     source <(
+      #       doppler secrets substitute \
+      #         <(echo -e \
+      #           '{{ range $key, $val := . }}
+      #             echo "{{$val}}" | wrangler secret put {{$key}};
+      #           {{end}}'
+      #         )
+      #     )
+
+      - name: Publish API
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: ./api
+
+  deploy_frontend:
+    runs-on: ubuntu-latest
+    name: Deploy frontend
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 8
+          run_install: false
+
+      - name: Install deps
+        run: pnpm install
+        working-directory: ./app
+
+      - name: Publish
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: 'quack-quack-app'
+          directory: 'dist'
+          workingDirectory: ./app

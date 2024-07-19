@@ -1,0 +1,29 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240605.0",
+    "@types/uuid": "^9.0.1",
+    "typescript": "^5.5.3",
+    "wrangler": "3.60.2"
+  },
+  "private": true,
+  "scripts": {
+    "start": "doppler run --mount .dev.vars --mount-format env -p quack-quack -c dev -- wrangler dev",
+    "dev": "wrangler dev --local",
+    "deploy": "wrangler publish",
+    "get-data": "doppler run -p quack-quack -c dev -- tsx getDataForR2.ts"
+  },
+  "dependencies": {
+    "@pothos/core": "^3.41.1",
+    "@pothos/plugin-scope-auth": "^3.22.0",
+    "cloudflare": "^3.2.0",
+    "graphql": "^16.8.2",
+    "graphql-scalars": "^1.23.0",
+    "graphql-ws": "^5.16.0",
+    "graphql-yoga": "^5.3.1",
+    "slugify": "^1.6.6",
+    "tsx": "^4.15.2",
+    "uuid": "^9.0.0"
+  }
+}

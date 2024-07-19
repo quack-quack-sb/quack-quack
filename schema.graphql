@@ -1,0 +1,62 @@
+type Account {
+  id: String!
+  name: String!
+}
+
+type AddEvent {
+  id: String!
+  name: String!
+  type: String!
+}
+
+scalar File
+
+union HonkEvent = AddEvent | RemoveEvent | SoundEvent
+
+type Mutation {
+  addSound(emoji: String!, file: File!, name: String!): Sound!
+  deleteSound(soundName: String!): Sound!
+  honk(from: String!, name: String!, room: String! = "singleroom"): Boolean!
+  join(name: String!, room: String! = "singleroom"): Account!
+}
+
+type Query {
+  room(name: String! = "singleroom"): Room!
+  sounds: [Sound!]!
+}
+
+type RemoveEvent {
+  id: String!
+  name: String!
+  type: String!
+}
+
+type Room {
+  name: String!
+  people: [Account!]!
+  sounds: [Sound!]!
+}
+
+type Sound {
+  description: String!
+  emoji: String!
+  name: String!
+  soundUrl: String!
+}
+
+type SoundEvent {
+  from: String!
+  sound: Sound!
+  type: String!
+}
+
+input SoundInput {
+  description: String!
+  emoji: String!
+  name: String!
+  soundUrl: String!
+}
+
+type Subscription {
+  room(accountId: String!, accountName: String!): HonkEvent
+}
